@@ -41,8 +41,8 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.PantallaSplash.route) { SplashScreen(navigation) }
                         composable(Routes.PantallaMenu.route) { ScreenMenu(navigation, myViewModel) }
                         composable(Routes.PantallaJuego.route) { ScreenGame(navigation, myViewModel) }
-                        composable(Routes.PantallaFinal.route) { ScreenSettings(navigation, myViewModel) }
-                        composable(Routes.PantallaConfiguraciones.route) { EndScreen(navigation, myViewModel) }
+                        composable(Routes.PantallaConfiguraciones.route) { ScreenSettings(navigation, myViewModel) }
+                        composable(Routes.PantallaFinal.route) { EndScreen(navigation, myViewModel) }
                     }
                 }
             }

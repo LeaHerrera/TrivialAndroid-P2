@@ -37,7 +37,7 @@ fun Splash(alphaAnim: Float) {
         Image(painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = "logo", alpha = alphaAnim
         )
-        Text(text = "¡Escapa de la muerte!", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+        Text(text = "¡Trivial!", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
 
     }
 }
