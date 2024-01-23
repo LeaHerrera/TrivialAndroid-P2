@@ -1,3 +1,4 @@
+import android.os.CountDownTimer
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -26,6 +28,11 @@ import com.example.trivial.model.Preguntas
 @Composable
 fun ScreenGame(navController: NavController, myViewModel: MyViewModel) {
 
+    val tiempoInicialMilisegundos = ( myViewModel.ajustes.segundos*1000 ).toLong() // 5 segundos
+    val intervaloMilisegundos = 1000L // 1 segundo
+    var tiempo:String by rememberSaveable { mutableStateOf("") }
+
+    
 
     Column (
         verticalArrangement = Arrangement.Center,
@@ -33,151 +40,128 @@ fun ScreenGame(navController: NavController, myViewModel: MyViewModel) {
 
     ){
 
-        var contadorPreguntas:Int by rememberSaveable { mutableIntStateOf( myViewModel.ajustes.rondas ) }
-        var controlCount:Int by rememberSaveable { mutableIntStateOf( contadorPreguntas + 1 ) }
-       // var preguntaVacia:Preguntas by rememberSaveable { mutableStateOf(Preguntas(Dificultad.dificil,"h","h","h","h","h", "h") ) }
+        var questionIndice by rememberSaveable { mutableStateOf( 0 ) }
+        var question = myViewModel.preguntas[questionIndice]
 
-        //do {
-            /* var question:Preguntas by rememberSaveable { mutableStateOf(  Preguntas(Dificultad.dificil,"","","","","", "") ) }
-            if (controlCount > contadorPreguntas){
-                question = randowPregunta(myViewModel)
-                controlCount--
-            } */
+        val cuentaAtras = object : CountDownTimer(tiempoInicialMilisegundos, intervaloMilisegundos) {
+            override fun onTick(millisUntilFinished: Long) {
+                // Se llama cada vez que el contador cuenta un intervalo (cada segundo en este caso)
+                val segundosRestantes = millisUntilFinished / 1000
+                tiempo = "Segundos restantes: $segundosRestantes"
+            }
 
-          //  Text(text = preguntaVacia.enunciado )
+            override fun onFinish() {
+                // Se llama cuando la cuenta atrás termina
+                tiempo = "¡Cuenta atrás terminada!"
+                myViewModel.quitarCount()
+            }
+        }
 
-           // botones(question = preguntaVacia, contador = {  }, myViewModel = myViewModel )
-           // contadorPreguntas--
-
-       // } while ( contadorPreguntas == 0  )
-
-
+        if (myViewModel.contador % 2 == 0){
+            questionIndice = myViewModel.randowPregunta()
+            myViewModel.quitarCount()
+            cuentaAtras.start()
+        } else {
+            Text(text = tiempo)
+            playQuestions( question, myViewModel )
+        }
 
     }
 }
-@Composable
-fun botones(question: Preguntas, contador: () -> Unit, myViewModel: MyViewModel){
 
-    var colorBotones:Array<Color> = Array(4){ Color.Gray }
-    var botonCount:Int = 0
+@Composable
+fun playQuestions(question: Preguntas, myViewModel: MyViewModel){
+
+    Text(text = question.enunciado , fontSize = 20.sp , fontWeight = FontWeight.Bold )
+    botones(question, myViewModel )
+
+}
+
+@Composable
+fun botones(question: Preguntas, myViewModel: MyViewModel){
+
+    var color1:Color by remember { mutableStateOf( Color.Gray ) }
+    var color2:Color by remember { mutableStateOf( Color.Gray ) }
+    var color3:Color by remember { mutableStateOf( Color.Gray ) }
+    var color4:Color by remember { mutableStateOf( Color.Gray ) }
 
     Button(
         onClick = {
             if (question.resultCorrect == question.respuesta1){
-                colorBotones[botonCount] = Color.Green
+                color1 = Color.Green
                 myViewModel.añadirResCorrecta()
             } else {
-                colorBotones[botonCount] = Color.Red
+                color1 = Color.Red
             }
-            contador
+            myViewModel.quitarCount()
         },
         Modifier
             .width(300.dp)
             .padding(10.dp), //margen
-        colors = ButtonDefaults.buttonColors(colorBotones[botonCount])
+        colors = ButtonDefaults.buttonColors(color1)
     ){
-        Text(text = question.respuesta1 , fontSize = 20.sp , fontWeight = FontWeight.Bold )
+        Text(text = question.respuesta1 , fontSize = 25.sp , fontWeight = FontWeight.Bold )
     }
 
-    botonCount++
     Button(
         onClick = {
             if (question.resultCorrect == question.respuesta2){
-                colorBotones[botonCount] = Color.Green
+                color2 = Color.Green
                 myViewModel.añadirResCorrecta()
             } else {
-                colorBotones[botonCount] = Color.Red
+                color2 = Color.Red
             }
-            contador
+            myViewModel.quitarCount()
         },
         Modifier
             .width(300.dp)
             .padding(10.dp), //margen
-    colors = ButtonDefaults.buttonColors(colorBotones[botonCount])
+    colors = ButtonDefaults.buttonColors(color2)
     ){
-        Text(text = question.respuesta2 , fontSize = 20.sp , fontWeight = FontWeight.Bold )
+        Text(text = question.respuesta2 , fontSize = 25.sp , fontWeight = FontWeight.Bold )
     }
 
-    botonCount++
     Button(
         onClick = {
             if (question.resultCorrect == question.respuesta3){
-                colorBotones[botonCount] = Color.Green
+                color3 = Color.Green
                 myViewModel.añadirResCorrecta()
             } else {
-                colorBotones[botonCount] = Color.Red
+                color3 = Color.Red
             }
-            contador
+            myViewModel.quitarCount()
         },
         Modifier
             .width(300.dp)
             .padding(10.dp), //margen
-        colors = ButtonDefaults.buttonColors(colorBotones[botonCount])
+        colors = ButtonDefaults.buttonColors(color3)
     ){
-        Text(text = question.respuesta3 , fontSize = 20.sp , fontWeight = FontWeight.Bold )
+        Text(text = question.respuesta3 , fontSize = 25.sp , fontWeight = FontWeight.Bold )
     }
 
-    botonCount++
     Button(
         onClick = {
             if (question.resultCorrect == question.respuesta4){
-                colorBotones[botonCount] = Color.Green
+                color4 = Color.Green
                 myViewModel.añadirResCorrecta()
             } else {
-                colorBotones[botonCount] = Color.Red
+                color4 = Color.Red
             }
-            contador
+            myViewModel.quitarCount()
         },
         Modifier
             .width(300.dp)
             .padding(10.dp), //margen
-        colors = ButtonDefaults.buttonColors(colorBotones[botonCount])
+        colors = ButtonDefaults.buttonColors(color4)
     ){
-        Text(text = question.respuesta4 , fontSize = 20.sp , fontWeight = FontWeight.Bold )
+        Text(text = question.respuesta4 , fontSize = 25.sp , fontWeight = FontWeight.Bold )
     }
 }
 
 
-// OBTENER PREGUNTA ALEATORIA
-fun randowPregunta(myViewModel: MyViewModel):Preguntas{
 
-    val pregunta:Preguntas
 
-    var cadena:Array<Preguntas> = preguntaNivel( myViewModel.ajustes.dificultad , myViewModel.preguntas )
-    pregunta = preguntaAleatoria(cadena)
 
-    return pregunta
 
-}
 
-fun preguntaNivel(difficulty:Dificultad, cadena:Array<Preguntas>):Array<Preguntas>{
 
-    var cadenaDificultad:Array<Preguntas> // cadena con solo las preguntas de esa dificultad que se retornara
-    var listaCadena:MutableList<Preguntas> = mutableListOf() //Lista de almacenaje para contar preguntas de la dificultad buscada
-    var preguntaVacia:Preguntas = Preguntas(Dificultad.dificil,"","","","","", "")
-
-    //localizamos las preguntas
-    for ( pregunta in cadena ){
-        if (pregunta.dificultad == difficulty){
-            listaCadena.add(pregunta)
-        }
-    }
-
-    //almacenamos las preguntas
-    cadenaDificultad = Array(listaCadena.size){preguntaVacia}
-    repeat(listaCadena.size){
-        cadenaDificultad[it] = listaCadena[it]
-    }
-
-    return cadenaDificultad
-}
-
-fun preguntaAleatoria( cadena: Array<Preguntas>):Preguntas { //saca un dato tio pregunta de una lista de manera aleatoria
-
-    var palabraAleatoria:Preguntas
-
-    val indiceAleatorio = (cadena.indices).random() // Obtiene un índice aleatorio del array
-    palabraAleatoria = cadena[indiceAleatorio] // Devuelve el elemento del array en el índice aleatorio
-
-    return palabraAleatoria
-}
