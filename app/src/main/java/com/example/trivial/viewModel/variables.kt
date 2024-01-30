@@ -30,8 +30,10 @@ class  MyViewModel:ViewModel () {
     var indicePregunta by mutableStateOf( 0)
         private set
 
-    var reloj by mutableStateOf( true)
-    private set
+    var tiempo by mutableStateOf(0)
+        private set
+    var barraTiempo by mutableStateOf( 0f )
+        private set
 
     fun añadirResCorrecta(){
         respuestasCorrectas++
@@ -49,12 +51,15 @@ class  MyViewModel:ViewModel () {
 
     }
 
-    fun añadirReloj(){
-        reloj = true
+    fun addReloj(){
+        tiempo++
+        barraTiempo += 1f / ajustes.segundos
     }
-    fun MantenerReloj(){
-        reloj = false
-     }
+    fun recetReloj(){
+        tiempo = 0
+        barraTiempo = 0f
+    }
+
     fun quitarCount(){
         contador--
     }
