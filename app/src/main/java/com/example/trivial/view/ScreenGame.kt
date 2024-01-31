@@ -1,9 +1,6 @@
-import android.os.CountDownTimer
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,10 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.trivial.model.Preguntas
+import com.example.trivial.model.Pregunta
 import com.example.trivial.navigation.Routes
 import kotlinx.coroutines.delay
 
@@ -48,13 +41,13 @@ fun ScreenGame(navController: NavController, myViewModel: MyViewModel) {
             navController.navigate(Routes.PantallaFinal.route)
         }
         playQuestions( question, myViewModel )
-        barraDeTiempo(myViewModel = myViewModel)
+        barraDeTiempo(myViewModel = myViewModel, question)
     }
 }
 
 
 @Composable
-fun playQuestions(question: Preguntas, myViewModel: MyViewModel) {
+fun playQuestions(question: Pregunta, myViewModel: MyViewModel) {
 
     Text(text = question.enunciado , fontSize = 20.sp , fontWeight = FontWeight.Bold )
     botones(question, myViewModel )
@@ -62,40 +55,32 @@ fun playQuestions(question: Preguntas, myViewModel: MyViewModel) {
 }
 
 @Composable
-fun botones(question: Preguntas, myViewModel: MyViewModel) {
+fun botones(question: Pregunta, myViewModel: MyViewModel) {
 
     Column {
-        pregunta(respuesta = question.resultCorrect, enunciado = question.respuesta1, myViewModel = myViewModel)
-        pregunta(respuesta = question.resultCorrect, enunciado = question.respuesta2, myViewModel = myViewModel)
-        pregunta(respuesta = question.resultCorrect, enunciado = question.respuesta3, myViewModel = myViewModel)
-        pregunta(respuesta = question.resultCorrect, enunciado = question.respuesta4, myViewModel = myViewModel)
+        pregunta(question = question, enunciado = question.respuesta1, myViewModel = myViewModel)
+        pregunta(question = question, enunciado = question.respuesta2, myViewModel = myViewModel)
+        pregunta(question = question, enunciado = question.respuesta3, myViewModel = myViewModel)
+        pregunta(question = question, enunciado = question.respuesta4, myViewModel = myViewModel)
     }
 
 }
 @Composable
-fun pregunta (respuesta:String , enunciado:String, myViewModel: MyViewModel){
+fun pregunta (question: Pregunta , enunciado:String, myViewModel: MyViewModel){
 
-    var color:Color by remember {  mutableStateOf( Color.Gray ) }
-    var boton by remember {  mutableStateOf( false ) }
-
-    if( myViewModel.tiempo == 2 && boton){
-        color = Color.Gray
-        myViewModel.recetReloj()
-        boton = false
-    }
+    var color:Color = Color.Gray
 
     Button(
         onClick = {
-            if (respuesta == enunciado) {
-                color = Color.Green
+            if (question.resultCorrect == enunciado) {
                 myViewModel.añadirResCorrecta()
+                myViewModel.añadirResult(question , 1)
             } else {
-                color = Color.Red
+                myViewModel.añadirResult(question , -1)
             }
-            myViewModel.recetReloj()
-            boton = true
-            myViewModel.quitarCount()
             myViewModel.randowPregunta()
+            myViewModel.recetReloj()
+            myViewModel.quitarCount()
         },
         Modifier
             .width(300.dp)
@@ -106,11 +91,8 @@ fun pregunta (respuesta:String , enunciado:String, myViewModel: MyViewModel){
     }
 }
 
-fun espera(seg :Int){
-    Thread.sleep((seg*100).toLong())
-}
 @Composable
-fun barraDeTiempo(myViewModel: MyViewModel) {
+fun barraDeTiempo(myViewModel: MyViewModel, question: Pregunta) {
 
     val segTotal = myViewModel.ajustes.segundos
 
@@ -128,14 +110,17 @@ fun barraDeTiempo(myViewModel: MyViewModel) {
         Text(text = "  ${myViewModel.tiempo}s / ${segTotal}s" , modifier = Modifier.padding(top = 25.dp))
         LinearProgressIndicator(progress = animatedProgress , modifier = Modifier
             .height(10.dp)
-            .fillMaxWidth(0.8f))
+            .fillMaxWidth(0.8f)
+        )
     }
     if (myViewModel.tiempo == segTotal) {
         myViewModel.randowPregunta()
         myViewModel.quitarCount()
         myViewModel.recetReloj()
+        myViewModel.añadirResult(question , 0)
     }
 }
+
 
 
 

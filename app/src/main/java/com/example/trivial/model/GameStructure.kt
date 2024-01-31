@@ -1,5 +1,5 @@
 package com.example.trivial.model
-data class Preguntas(
+data class Pregunta(
     val dificultad: Dificultad ,
     val enunciado: String,
     val respuesta1:String,
@@ -19,4 +19,9 @@ data class Settings (
     var dificultad: Dificultad,
     var rondas:Int,
     var segundos:Int
+)
+
+data class Result(
+    var question:Pregunta,
+    var resultado: Int
 )
