@@ -40,16 +40,16 @@ fun ScreenMenu(navController: NavController, myViewModel: MyViewModel) {
 
     ){
 
-
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground ) ,
             contentDescription = ""
         )
         Text(text = "Trivial Game")
 
-        val context = LocalContext.current
+
         Button(
             onClick = {
+                myViewModel.recet()
                 navController.navigate(Routes.PantallaJuego.route)
             },
             Modifier

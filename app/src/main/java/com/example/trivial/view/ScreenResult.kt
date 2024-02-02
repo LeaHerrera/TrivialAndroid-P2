@@ -4,8 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,7 +20,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -69,12 +73,16 @@ fun EndScreen(navController: NavController, myViewModel: MyViewModel) {
 
         RespuestasCorrectas(myViewModel = myViewModel)
 
+        Spacer(modifier = Modifier.padding(40.dp))
+
         VoverButton(navController = navController)
         CompartirButton(text = "", context = context )
     }
 }
 @Composable
 fun RespuestasCorrectas(myViewModel: MyViewModel){
+
+    var color:Color by remember { mutableStateOf( Color.Gray ) }
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -89,32 +97,59 @@ fun RespuestasCorrectas(myViewModel: MyViewModel){
 
         val mitad = myViewModel.preguntasResult.size / 2
         Row (
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
             modifier = Modifier
-                .fillMaxWidth(0.5f)
+                .fillMaxWidth()
         ){
-            for (pregunta in 0..mitad){
-                Column (
-                    modifier = Modifier
-                        .background(Color.Gray)
-                        .alpha(0.6f)
-                        .fillMaxWidth()
-                ){
-                    Text(text = myViewModel.preguntasResult[pregunta].question.enunciado , fontSize = 5.sp)
+
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .padding(10.dp)
+            ){
+                for (pregunta in 0..mitad){
+
+                    if (myViewModel.preguntasResult[pregunta].resultado ==  1){
+                        color = Color.Green
+                    } else if ( myViewModel.preguntasResult[pregunta].resultado ==  -1 ){
+                        color = Color.Red
+                    } else {
+                        color = Color.DarkGray
+                    }
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .background(color)
+                            .fillMaxWidth(0.9f)
+                    ){
+                        Text(text = myViewModel.preguntasResult[pregunta].question.enunciado , fontSize = 20.sp )
+                    }
                 }
             }
-        }
-        Row (
-            modifier = Modifier
-                .fillMaxWidth(0.5f)
-        ){
-            for (pregunta in mitad+1..myViewModel.preguntasResult.lastIndex){
-                Column (
-                    modifier = Modifier
-                        .background(Color.Gray)
-                        .alpha(0.6f)
-                        .fillMaxWidth()
-                ){
-                    Text(text = myViewModel.preguntasResult[pregunta].question.enunciado , fontSize = 5.sp)
+
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth()
+            ){
+                for (pregunta in mitad+1..myViewModel.preguntasResult.lastIndex){
+
+                    if (myViewModel.preguntasResult[pregunta].resultado ==  1){
+                        color = Color.Green
+                    } else if ( myViewModel.preguntasResult[pregunta].resultado ==  -1 ){
+                        color = Color.Red
+                    } else {
+                        color = Color.DarkGray
+                    }
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .background(color)
+                            .fillMaxWidth(0.9f)
+                    ){
+                        Text(text = myViewModel.preguntasResult[pregunta].question.enunciado , fontSize = 20.sp, fontWeight = FontWeight(500) )
+                    }
+
                 }
             }
         }
@@ -135,7 +170,8 @@ fun CompartirButton(text: String, context: Context) {
 
     Button(
         modifier = Modifier
-            .fillMaxWidth(0.5f),
+            .fillMaxWidth(0.5f)
+            .padding(5.dp),
         onClick = {
             ContextCompat.startActivity(context, shareIntent, null)
         },
@@ -152,7 +188,7 @@ fun VoverButton(navController: NavController) {
     Button(
         modifier = Modifier
             .fillMaxWidth(0.5f)
-            .padding(15.dp),
+            .padding(5.dp),
         onClick = {
             navController.navigate(Routes.PantallaMenu.route)
         },

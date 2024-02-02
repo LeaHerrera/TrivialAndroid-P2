@@ -23,6 +23,8 @@ class  MyViewModel:ViewModel () {
 
     var ajustes:Settings = Settings(Dificultad.facil , 5 , 10)
         private set
+    var DarkMode by mutableStateOf(true)
+        private set
 
     var respuestasCorrectas by mutableStateOf(0)
         private set
@@ -52,6 +54,18 @@ class  MyViewModel:ViewModel () {
 
         indicePregunta = pregunta
 
+    }
+    fun changeDarkMode( estado:Boolean){
+        DarkMode = estado
+    }
+    fun changeSeg( num:Int){
+        ajustes.segundos = num
+    }
+    fun changeRondas( num:Int ){
+        ajustes = Settings( ajustes.dificultad , num , ajustes.segundos)
+    }
+    fun changeDifficulty( difficulty:Dificultad){
+        ajustes.dificultad = difficulty
     }
 
     fun añadirResult(question:Pregunta , ganar:Int){
@@ -90,6 +104,11 @@ class  MyViewModel:ViewModel () {
         }
 
         return cadenaDificultad
+    }
+    fun recet(){
+        preguntasResult = mutableListOf()
+        respuestasCorrectas = 0
+        contador = ajustes.rondas
     }
 
     private fun preguntaAleatoria( cadena: Array<Pregunta>):Int { //saca un dato tio pregunta de una lista de manera aleatoria
