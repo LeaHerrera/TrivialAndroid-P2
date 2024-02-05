@@ -23,7 +23,7 @@ class  MyViewModel:ViewModel () {
 
     var ajustes:Settings = Settings(Dificultad.facil , 5 , 10)
         private set
-    var DarkMode by mutableStateOf(true)
+    var DarkMode by mutableStateOf(false)
         private set
 
     var respuestasCorrectas by mutableStateOf(0)
@@ -113,7 +113,19 @@ class  MyViewModel:ViewModel () {
 
     private fun preguntaAleatoria( cadena: Array<Pregunta>):Int { //saca un dato tio pregunta de una lista de manera aleatoria
 
-        val indiceAleatorio = (cadena.indices).random() // Obtiene un índice aleatorio del array
+        var indiceAleatorio = 0
+
+        do{
+            var seguir = true
+             indiceAleatorio = (cadena.indices).random() // Obtiene un índice aleatorio del array
+
+            repeat(preguntasResult.size){
+               if ( cadena[indiceAleatorio].enunciado.equals( preguntasResult[it].question.enunciado) ){
+                   seguir = false
+               }
+            }
+
+        } while ( !seguir )
 
         return indiceAleatorio
     }

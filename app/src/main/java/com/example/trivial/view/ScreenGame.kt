@@ -1,17 +1,29 @@
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.trivial.model.Dificultad
 import com.example.trivial.model.Pregunta
 import com.example.trivial.navigation.Routes
 import kotlinx.coroutines.delay
@@ -41,7 +54,7 @@ fun ScreenGame(navController: NavController, myViewModel: MyViewModel) {
             navController.navigate(Routes.PantallaFinal.route)
         }
         playQuestions( question, myViewModel )
-        barraDeTiempo(myViewModel = myViewModel, question)
+        BarraDeTiempo(myViewModel = myViewModel, question)
     }
 }
 
@@ -78,13 +91,17 @@ fun pregunta (question: Pregunta , enunciado:String, myViewModel: MyViewModel){
             } else {
                 myViewModel.añadirResult(question , -1)
             }
-            myViewModel.randowPregunta()
-            myViewModel.recetReloj()
             myViewModel.quitarCount()
+            if (myViewModel.contador != 0){
+                myViewModel.randowPregunta()
+            }
+            myViewModel.recetReloj()
         },
         Modifier
             .width(300.dp)
-            .padding(10.dp), //margen
+            .padding(10.dp)
+            .border(3.dp, Color.Blue, RoundedCornerShape(100.dp) )
+        , //margen
         colors = ButtonDefaults.buttonColors(color)
     ) {
         Text(text = enunciado, fontSize = 25.sp, fontWeight = FontWeight.Bold)
@@ -92,7 +109,7 @@ fun pregunta (question: Pregunta , enunciado:String, myViewModel: MyViewModel){
 }
 
 @Composable
-fun barraDeTiempo(myViewModel: MyViewModel, question: Pregunta) {
+fun BarraDeTiempo(myViewModel: MyViewModel, question: Pregunta) {
 
     val segTotal = myViewModel.ajustes.segundos
 
@@ -114,8 +131,10 @@ fun barraDeTiempo(myViewModel: MyViewModel, question: Pregunta) {
         )
     }
     if (myViewModel.tiempo == segTotal) {
-        myViewModel.randowPregunta()
         myViewModel.quitarCount()
+        if (myViewModel.contador == 0){
+            myViewModel.randowPregunta()
+        }
         myViewModel.recetReloj()
         myViewModel.añadirResult(question , 0)
     }

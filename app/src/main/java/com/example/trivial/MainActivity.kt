@@ -24,16 +24,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TrivialTheme {
 
-                val myViewModel by viewModels<MyViewModel>()
-                val navigation = rememberNavController()
+            val myViewModel by viewModels<MyViewModel>()
+            val navigation = rememberNavController()
+
+            TrivialTheme(darkTheme = myViewModel.DarkMode) {
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
                     NavHost(
                         navController = navigation,
                         startDestination = Routes.PantallaSplash.route

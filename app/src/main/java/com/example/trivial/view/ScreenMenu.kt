@@ -1,26 +1,22 @@
-import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,39 +35,83 @@ fun ScreenMenu(navController: NavController, myViewModel: MyViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
 
     ){
-
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground ) ,
-            contentDescription = ""
-        )
-        Text(text = "Trivial Game")
-
-
-        Button(
-            onClick = {
-                myViewModel.recet()
-                navController.navigate(Routes.PantallaJuego.route)
-            },
-            Modifier
-                .width(300.dp)
-                .padding(10.dp), //margen
-            colors = ButtonDefaults.buttonColors(Color.Gray)
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxHeight(0.5f)
         ){
-            Text(text = "New Game" , fontSize = 20.sp , fontWeight = FontWeight.Bold )
+            Image(
+                painter = painterResource(id = R.drawable.logo ) ,
+                contentDescription = "",
+                modifier = Modifier.fillMaxSize(0.8f)
+            )
+            Text(text = "Trivial Game" , fontWeight = FontWeight.Black , fontSize = 30.sp)
         }
 
-        Button(
-            onClick = {
-                navController.navigate(Routes.PantallaConfiguraciones.route)
-            },
-            Modifier
-                .width(300.dp)
-                .padding(10.dp)
-            , //margen
-            colors = ButtonDefaults.buttonColors(Color.Gray)
+        Row (
+            modifier = Modifier.fillMaxHeight(0.4f),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ){
-            Text(text = "Ajustes" , fontSize = 20.sp , fontWeight = FontWeight.Bold )
+            Box(modifier = Modifier.fillMaxWidth(0.5f)){
+                PlayButton(navController = navController, myViewModel = myViewModel)
+            }
+            Box(modifier = Modifier
+                .fillMaxWidth(0.7f)
+                .fillMaxHeight(0.85f)){
+                SettingButton(navController = navController, myViewModel = myViewModel)
+            }
         }
+
     }
 }
 
+@Composable
+fun SettingButton(navController: NavController , myViewModel: MyViewModel) {
+
+    val color:Color = if (myViewModel.DarkMode) Color.White else Color.Black
+
+    Button(
+        onClick = {
+            navController.navigate(Routes.PantallaConfiguraciones.route)
+        },
+        Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .padding(10.dp)
+            .border(3.dp, Color.Blue, RoundedCornerShape(100.dp) )
+        , //margen
+        colors = ButtonDefaults.buttonColors(color)
+    ){
+        Image(
+            painter = painterResource(id = R.drawable.settings3),
+            contentDescription = "Settings" ,
+            modifier = Modifier.fillMaxSize()
+        )
+     }
+}
+
+@Composable
+fun PlayButton(navController: NavController , myViewModel: MyViewModel) {
+
+    val color:Color = if (myViewModel.DarkMode) Color.White else Color.Black
+
+    Button(
+        onClick = {
+            myViewModel.recet()
+            navController.navigate(Routes.PantallaJuego.route)
+        },
+        Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .padding(10.dp)
+            .border(3.dp, Color.Blue, RoundedCornerShape(100.dp)), //margen
+        colors = ButtonDefaults.buttonColors(color)
+    ){
+        Image(
+            painter = painterResource(id = R.drawable.play),
+            contentDescription = "Play",
+            modifier = Modifier.padding(10.dp)
+        )
+    }
+}
