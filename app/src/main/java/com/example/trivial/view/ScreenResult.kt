@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -57,8 +58,6 @@ fun EndScreen(navController: NavController, myViewModel: MyViewModel) {
         }
     }
 
-
-
 }
 @Composable
 fun ScreenResultVertical(myViewModel: MyViewModel , context: Context , navController: NavController){
@@ -91,16 +90,24 @@ fun ScreenResultHorizontal(myViewModel: MyViewModel , context: Context , navCont
 
     ){
 
-        val texto by rememberSaveable { mutableStateOf("") }
-        val imagen = if (myViewModel.respuestasCorrectas == myViewModel.ajustes.rondas) R.drawable.bien else R.drawable.mal
+        Box (
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxWidth(0.5f)
+        ){
+            CuadroResultado(myViewModel = myViewModel)
+        }
 
-        CuadroResultado(myViewModel = myViewModel)
-
-        Column {
+        Column (
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth(0.9f)
+        ){
 
             RespuestasCorrectas(myViewModel = myViewModel)
 
-            Spacer(modifier = Modifier.fillMaxWidth(0.2f))
+            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
 
             VoverButton(navController = navController , myViewModel = myViewModel)
             CompartirButton(text = "¡He optenido ${myViewModel.respuestasCorrectas} / ${myViewModel.ajustes.rondas} en el TRIVIAL!", context = context , myViewModel = myViewModel)
@@ -143,7 +150,6 @@ fun RespuestasCorrectas(myViewModel: MyViewModel){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .alpha(0.5f)
             .padding(10.dp)
             .fillMaxWidth(0.9f)
             .border(3.dp, Color.Blue)

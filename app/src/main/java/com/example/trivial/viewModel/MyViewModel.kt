@@ -6,6 +6,9 @@ import com.example.trivial.model.Dificultad
 import com.example.trivial.model.Pregunta
 import com.example.trivial.model.Result
 import com.example.trivial.model.Settings
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
 
 class  MyViewModel:ViewModel () {
 
@@ -84,11 +87,12 @@ class  MyViewModel:ViewModel () {
     fun quitarCount(){
         contador--
     }
+
     private fun preguntaNivel(difficulty:Dificultad, cadena:Array<Pregunta>):Array<Pregunta>{
 
         var cadenaDificultad:Array<Pregunta> // cadena con solo las preguntas de esa dificultad que se retornara
         var listaCadena:MutableList<Pregunta> = mutableListOf() //Lista de almacenaje para contar preguntas de la dificultad buscada
-        var preguntaVacia:Pregunta = Pregunta(Dificultad.dificil,"","","","","", "")
+        var preguntaVacia:Pregunta = Pregunta(Dificultad.facil,"","","","","", "")
 
         //localizamos las preguntas
         for ( pregunta in cadena ){
@@ -105,6 +109,7 @@ class  MyViewModel:ViewModel () {
 
         return cadenaDificultad
     }
+
     fun recet(){
         preguntasResult = mutableListOf()
         respuestasCorrectas = 0

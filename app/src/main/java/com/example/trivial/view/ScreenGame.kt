@@ -1,9 +1,11 @@
+import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,12 +43,9 @@ import kotlinx.coroutines.delay
 @Composable
 fun ScreenGame(navController: NavController, myViewModel: MyViewModel) {
 
-
-
     Column (
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-
     ){
 
         var question = myViewModel.preguntas[myViewModel.indicePregunta]
@@ -70,13 +70,32 @@ fun playQuestions(question: Pregunta, myViewModel: MyViewModel) {
 @Composable
 fun botones(question: Pregunta, myViewModel: MyViewModel) {
 
-    Column {
-        pregunta(question = question, enunciado = question.respuesta1, myViewModel = myViewModel)
-        pregunta(question = question, enunciado = question.respuesta2, myViewModel = myViewModel)
-        pregunta(question = question, enunciado = question.respuesta3, myViewModel = myViewModel)
-        pregunta(question = question, enunciado = question.respuesta4, myViewModel = myViewModel)
-    }
 
+    val configuration = LocalConfiguration.current
+    when (configuration.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            Row {
+                Column (
+                    Modifier.fillMaxWidth(0.5f)
+                ){
+                    pregunta(question = question, enunciado = question.respuesta1, myViewModel = myViewModel)
+                    pregunta(question = question, enunciado = question.respuesta3, myViewModel = myViewModel)
+                }
+                Column {
+                    pregunta(question = question, enunciado = question.respuesta2, myViewModel = myViewModel)
+                    pregunta(question = question, enunciado = question.respuesta4, myViewModel = myViewModel)
+                }
+            }
+        }
+        else -> {
+            Column {
+                pregunta(question = question, enunciado = question.respuesta1, myViewModel = myViewModel)
+                pregunta(question = question, enunciado = question.respuesta2, myViewModel = myViewModel)
+                pregunta(question = question, enunciado = question.respuesta3, myViewModel = myViewModel)
+                pregunta(question = question, enunciado = question.respuesta4, myViewModel = myViewModel)
+            }
+        }
+    }
 }
 @Composable
 fun pregunta (question: Pregunta , enunciado:String, myViewModel: MyViewModel){
@@ -98,9 +117,9 @@ fun pregunta (question: Pregunta , enunciado:String, myViewModel: MyViewModel){
             myViewModel.recetReloj()
         },
         Modifier
-            .width(300.dp)
+            .fillMaxWidth(0.7f)
             .padding(10.dp)
-            .border(3.dp, Color.Blue, RoundedCornerShape(100.dp) )
+            .border(3.dp, Color.Blue, RoundedCornerShape(100.dp))
         , //margen
         colors = ButtonDefaults.buttonColors(color)
     ) {
